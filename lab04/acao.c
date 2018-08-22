@@ -28,10 +28,12 @@ acao adicionar_variacao(acao a, double variacao) {
 
 void reportar_acao(acao a) {
     int i;
+    char *resultado;
     double val_final = a.investimento;
+
     for (i = 0; i < a.n_variacoes; i++)
         val_final *= a.variacoes[i] / 100 + 1;
 
-    char *resultado = val_final > a.investimento ? "GANHO" : "PERDA";
+    resultado = val_final > a.investimento ? "GANHO" : "PERDA";
     printf("%s %.2f %s\n", a.nome, val_final, resultado);
 }
