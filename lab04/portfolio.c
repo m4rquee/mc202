@@ -28,8 +28,8 @@ portfolio adicionar_acao(portfolio p, acao a) {
 
 void criar_relatorio(portfolio p) {
     int i;
-    printf("Relatorio de %s %s\n", &p.nome, &p.sobrenome);
-    for (i = 0; i < p.n_acoes; i++) {
+    printf("Relatorio de %s %s\n", p.nome, p.sobrenome);
+
+    for (i = 0; i < p.n_acoes; i++)
         reportar_acao(p.acoes[i]);
-    }
 }
