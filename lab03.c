@@ -2,10 +2,10 @@
 
 #define BUFF_SIZE 100
 
-void cat(char buffer[], char arg[], int *len_buff, int len_arg) {
+void cat(char buff[], char cmd_arg[], int *len_buff, int len_arg) {
     int i;
     for (i = 0; i < len_arg; i++)
-        buffer[*len_buff + i] = arg[i];
+        buff[*len_buff + i] = cmd_arg[i];
 
     *len_buff += len_arg;
 }
@@ -24,15 +24,15 @@ char cmp(char a[], char b[], int len_a, int len_b) {
 
 void sub(char buff[], int x, int tam, int *len_buff) {
     int i;
-    for (i = x; i < tam + x; i++)
-        printf("%c", buff[i]);
+    for (i = 0; i < tam; i++)
+        buff[i] = buff[x + i];
 
-    printf("\n");
+    *len_buff = tam;
 }
 
-void print_vet(char buff[], int tam) {
+void print_vet(char buff[], int len_buff) {
     int i;
-    for (i = 0; i < tam; i++)
+    for (i = 0; i < len_buff; i++)
         printf("%c", buff[i]);
 
     printf("\n");
@@ -45,22 +45,22 @@ int str_len(char buff[]) {
 }
 
 int main() {
-    char cmd[3 + 1];
-    int len_buff = 0;
-    char buffer[BUFF_SIZE], arg[BUFF_SIZE + 1];
+    int len_buff = 0, x, tam;
+    char cmd[3 + 1], is_equal;
+    char buffer[BUFF_SIZE], cmd_arg[BUFF_SIZE + 1];
 
     do {
         scanf("%s", cmd);
 
         if (cmp(cmd, "CAT", 3, 3)) {
-            scanf("%s", arg);
-            cat(buffer, arg, &len_buff, str_len(arg));
+            scanf("%s", cmd_arg);
+            cat(buffer, cmd_arg, &len_buff, str_len(cmd_arg));
             print_vet(buffer, len_buff);
         } else if (cmp(cmd, "CMP", 3, 3)) {
-            scanf("%s", arg);
-            printf("%s\n", cmp(buffer, arg, len_buff, str_len(arg)) ? "IGUAL" : "DIFERENTE");
+            scanf("%s", cmd_arg);
+            is_equal = cmp(buffer, cmd_arg, len_buff, str_len(cmd_arg));
+            printf("%s\n", is_equal ? "IGUAL" : "DIFERENTE");
         } else if (cmp(cmd, "SUB", 3, 3)) {
-            int x, tam;
             scanf("%d %d", &x, &tam);
             sub(buffer, x, tam, &len_buff);
             print_vet(buffer, len_buff);
