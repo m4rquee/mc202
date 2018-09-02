@@ -14,3 +14,9 @@ add_executable(
         lab04/acao.h lab04/acao.c
         lab04/portfolio.h lab04/portfolio.c
 )
+
+include_directories(lab06)
+add_executable(
+        lab06 lab06/lab06.c
+        lab06/universidade.h lab06/universidade.c
+)
