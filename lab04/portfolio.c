@@ -12,18 +12,9 @@ portfolio criar_portfolio(char *nome, char *sobrenome) {
 }
 
 portfolio adicionar_acao(portfolio p, acao a) {
-    int i;
-    portfolio ret;
-    strcpy(ret.nome, p.nome);
-    strcpy(ret.sobrenome, p.sobrenome);
-
-    for (i = 0; i < p.n_acoes; i++)
-        ret.acoes[i] = p.acoes[i];
-
-    ret.acoes[p.n_acoes] = a;
-    ret.n_acoes = p.n_acoes + 1;
-
-    return ret;
+    p.acoes[p.n_acoes] = a;
+    p.n_acoes += 1;
+    return p;
 }
 
 void criar_relatorio(portfolio p) {
