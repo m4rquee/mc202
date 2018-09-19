@@ -7,6 +7,7 @@ add_executable(lab01 lab01.c)
 add_executable(lab02 lab02.c)
 add_executable(lab03 lab03.c)
 add_executable(lab05 lab05.c)
+add_executable(lab07 lab07.c)
 
 include_directories(lab04)
 add_executable(
