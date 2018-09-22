@@ -4,11 +4,12 @@
 #define VAZIO 'O'
 #define ESPACO ' '
 #define OCUPADO '*'
-#define dentro(x, MAX) ((x) < (MAX) && (x) >= 0)
+#define dentro(x, MAX) (0 <= (x) && (x) < (MAX)) /* Checa se x pertence ao intervalo [0, MAX) */
+/* Checa se a possicao esta disponivel para ser usada, mas antes faz uma validacao: */
 #define e_vazia(lab, M, N, i, j) (dentro(i, M) && dentro(j, N) && (lab)[i][j] == VAZIO)
 
-void *safe_calloc(int nmemb, size_t size) {
-    void *ret = calloc((unsigned int) nmemb, size);
+void *safe_malloc(size_t size) {
+    void *ret = malloc(size);
     if (ret == NULL) {
         printf("Erro ao alocar memoria");
         exit(EXIT_FAILURE);
@@ -18,9 +19,9 @@ void *safe_calloc(int nmemb, size_t size) {
 
 char **aloca_matriz(int M, int N) {
     int i;
-    char **ret = safe_calloc(M, sizeof(char *));
+    char **ret = safe_malloc(M * sizeof(char *));
     for (i = 0; i < M; i++)
-        ret[i] = safe_calloc(N, sizeof(char));
+        ret[i] = safe_malloc(N * sizeof(char));
     return ret;
 }
 
@@ -43,48 +44,48 @@ char **le_labirinto(int M, int N) {
     return ret;
 }
 
-char gera_caminho(char ***caminho, char **lab, int M, int N, int i_i, int j_i, int i_f, int j_f) {
-    if (i_i == i_f && j_i == j_f) /* Caso base */
-        return (*caminho)[i_i][j_i] = 1;
+char gera_caminho(char **lab, int M, int N, int i_i, int j_i, int i_f, int j_f) {
+    if (i_i == i_f && j_i == j_f) /* Caso base (achou a saida) */
+        return lab[i_i][j_i] = OCUPADO;
 
-    if (e_vazia(lab, M, N, i_i, j_i) && !(*caminho)[i_i][j_i]) { /* Checa se nao passou e nao tem parede */
-        (*caminho)[i_i][j_i] = 1;
+    /* Checa se nao passou ainda e nao tem parede: */
+    if (e_vazia(lab, M, N, i_i, j_i)) {
+        lab[i_i][j_i] = OCUPADO;
 
-        if (gera_caminho(caminho, lab, M, N, i_i + 1, j_i, i_f, j_f))
+        /* Tenta cada direcao possivel a partir da possicao atual: */
+        if (gera_caminho(lab, M, N, i_i + 1, j_i, i_f, j_f)) /* Abaixo */
             return 1;
-        else if (gera_caminho(caminho, lab, M, N, i_i - 1, j_i, i_f, j_f))
+        else if (gera_caminho(lab, M, N, i_i - 1, j_i, i_f, j_f)) /* Acima */
             return 1;
-        else if (gera_caminho(caminho, lab, M, N, i_i, j_i + 1, i_f, j_f))
+        else if (gera_caminho(lab, M, N, i_i, j_i + 1, i_f, j_f)) /* Direita */
             return 1;
-        else if (gera_caminho(caminho, lab, M, N, i_i, j_i - 1, i_f, j_f))
+        else if (gera_caminho(lab, M, N, i_i, j_i - 1, i_f, j_f)) /* Esquerda */
             return 1;
-        else
-            (*caminho)[i_i][j_i] = 0; /* Caso nao encontre solucao reseta a possicao atual */
+
+        lab[i_i][j_i] = VAZIO; /* Caso nao encontre solucao reseta a possicao atual */
     }
 
     return 0;
 }
 
-void printa_caminho(char **caminho, int M, int N) {
+void printa_caminho(char **lab, int M, int N) {
     int i, j;
     for (i = 0; i < M; i++) {
         for (j = 0; j < N; j++)
-            printf("%c", caminho[i][j] ? OCUPADO : ESPACO);
+            printf("%c", lab[i][j] == OCUPADO ? OCUPADO : ESPACO);
         printf("\n");
     }
 }
 
 int main() {
-    char **labirinto, **caminho;
+    char **labirinto;
     int LT, CT, LE, CE, LS, CS;
 
     scanf("%d %d %d %d %d %d ", &LT, &CT, &LE, &CE, &LS, &CS);
     labirinto = le_labirinto(LT, CT);
-    caminho = aloca_matriz(LT, CT);
-    gera_caminho(&caminho, labirinto, LT, CT, LE, CE, LS, CS);
-    printa_caminho(caminho, LT, CT);
+    gera_caminho(labirinto, LT, CT, LE, CE, LS, CS);
+    printa_caminho(labirinto, LT, CT);
 
     del_matriz(labirinto, LT);
-    del_matriz(caminho, LT);
     return 0;
 }
