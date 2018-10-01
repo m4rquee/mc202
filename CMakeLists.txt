@@ -3,6 +3,9 @@ project(mc202 C)
 
 set(CMAKE_C_STANDARD 90)
 
+#include_directories(miscellaneous)
+#add_executable(miscellaneous miscellaneous/linked_list.c)
+
 add_executable(lab01 lab01.c)
 add_executable(lab02 lab02.c)
 add_executable(lab03 lab03.c)
@@ -20,4 +23,10 @@ include_directories(lab06)
 add_executable(
         lab06 lab06/lab06.c
         lab06/universidade.h lab06/universidade.c
+)
+
+include_directories(lab08)
+add_executable(
+        lab08 lab08/lab08.c
+        lab08/numero_astronomico.h lab08/numero_astronomico.c
 )
