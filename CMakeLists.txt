@@ -30,3 +30,11 @@ add_executable(
         lab08 lab08/lab08.c
         lab08/numero_astronomico.h lab08/numero_astronomico.c
 )
+
+include_directories(lab09)
+add_executable(
+        lab09 lab09/lab09.c
+        lab09/fila.h lab09/fila.c
+        lab09/jogador.h lab09/jogador.c
+        lab09/pilha.h lab09/pilha.c
+)
