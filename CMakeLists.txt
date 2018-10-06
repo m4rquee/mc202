@@ -3,8 +3,8 @@ project(mc202 C)
 
 set(CMAKE_C_STANDARD 90)
 
-#include_directories(miscellaneous)
-#add_executable(miscellaneous miscellaneous/linked_list.c)
+include_directories(miscellaneous)
+add_executable(miscellaneous miscellaneous/linked_list.c)
 
 add_executable(lab01 lab01.c)
 add_executable(lab02 lab02.c)

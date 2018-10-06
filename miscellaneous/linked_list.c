@@ -31,62 +31,6 @@ void print_lista(no *lista) {
     }
 }
 
-void print_lista_sem_loop(no *lista, char val) {
-    printf("%i -> ", lista->dado);
-
-    if (lista->prox->prox->dado != val)
-        print_lista(lista->prox);
-}
-
-void print_espacos(int n) {
-    char i;
-    for (i = 0; i < n; i++)
-        printf(" ");
-}
-
-void print_com_espacos(char *str, int espacos) {
-    print_espacos(espacos);
-    printf("%s", str);
-}
-
-no *inverte_visual(no *lista, int espacos) {
-    no *aux;
-
-    if (lista == NULL) {
-        //print_com_espacos("Atual = NULL -> {}\n", espacos);
-        return lista;
-    }
-
-    //print_espacos(espacos);
-    //printf("Atual = %i -> {\n", lista->dado);
-
-    aux = inverte_visual(lista->prox, espacos + 5);
-
-    print_com_espacos("aux = ", espacos + 5);
-    print_lista(aux);
-
-    if (aux == NULL) {
-        //print_com_espacos("}\n\n", espacos);
-        return lista;
-    }
-
-    print_com_espacos("aux = ", espacos + 5);
-    print_lista(aux);
-
-    lista->prox->prox = lista;
-
-    print_com_espacos("aux = ", espacos + 5);
-    print_lista_sem_loop(aux, lista->dado);
-
-    lista->prox = NULL;
-
-    print_com_espacos("aux = ", espacos + 5);
-    print_lista(aux);
-
-    //print_com_espacos("}\n\n", espacos);
-    return aux;
-}
-
 no *inverte(no *lista) {
     no *aux;
 
@@ -104,14 +48,12 @@ int main() {
     char i;
     no *lista = NULL;
 
-    for (i = TAM; i > 0; --i) {
+    for (i = TAM; i > 0; --i)
         lista = adiciona(lista, i);
-    }
 
     printf("Antes:\n");
     print_lista(lista);
 
-    printf("\nInvercao:\n");
     lista = inverte(lista);
 
     printf("Depois:\n");
