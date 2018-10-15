@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include "fila.h"
 
-#define pos(no) ((no)->jogador.pos) /* Determina a posicao do no dado o seu jogador */
-
 no_lista *cria_no_lista(jogador jogador) {
     no_lista *ret = calloc(1, sizeof(no_lista)); /* Inicia todos os valores com 0 */
     if (ret == NULL) {
@@ -42,33 +40,8 @@ jogador desenfileira(jogadores *p_jogadores) {
     return ret;
 }
 
-void insere(jogadores *p_jogadores, jogador jogador) {
-    no_lista *atual = p_jogadores->comeco, *p_novo;
-    if (atual == NULL || jogador.pos > pos(p_jogadores->fim)) {
-        enfileira(p_jogadores, jogador);
-        return;
-    }
-
-    p_novo = cria_no_lista(jogador);
-
-    if (jogador.pos < pos(atual)) { /* Caso o novo no deva ser o primeiro */
-        p_novo->proximo = atual;
-        p_jogadores->comeco = p_novo;
-        return;
-    }
-
-    /* O atual sempre tera um proximo, pois senao o primeiro if teria pegado: */
-    while (jogador.pos > pos(atual->proximo)) /* Encontra a posicao a ser inserida */
-        atual = atual->proximo;
-
-    p_novo->proximo = atual->proximo;
-    atual->proximo = p_novo;
-}
-
-void imprime_pontos(jogadores jogadores) {
-    no_lista *atual;
-    for (atual = jogadores.comeco; atual != NULL; atual = atual->proximo)
-        printf("%u\n", atual->jogador.pontos);
+char esta_vazia(jogadores jogadores) {
+    return jogadores.comeco == NULL;
 }
 
 void limpa_lista(no_lista *lista) {
@@ -78,6 +51,7 @@ void limpa_lista(no_lista *lista) {
     }
 }
 
-void limpa_jogadores(jogadores jogadores) {
-    limpa_lista(jogadores.comeco);
+void limpa_jogadores(jogadores *p_jogadores) {
+    limpa_lista(p_jogadores->comeco);
+    p_jogadores->comeco = p_jogadores->fim = NULL;
 }

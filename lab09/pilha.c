@@ -34,6 +34,6 @@ char desempilha(baralho *p_baralho) {
     return ret;
 }
 
-void limpa_baralho(baralho baralho) {
-    while (desempilha(&baralho)); /* Desempilha todos os valores */
+void limpa_baralho(baralho *p_baralho) {
+    while (desempilha(p_baralho)); /* Desempilha todos os valores */
 }

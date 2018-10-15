@@ -7,6 +7,21 @@
 #define HIT 'H'
 #define STAND 'S'
 
+jogador *safe_array_malloc(int tam) {
+    jogador *ret = malloc(tam * sizeof(jogador));
+    if (ret == NULL) {
+        printf("Erro ao alocar memoria");
+        exit(EXIT_FAILURE);
+    }
+    return ret;
+}
+
+void imprime_pontos(jogador *stand, int n) {
+    int i;
+    for (i = 0; i < n; i++)
+        printf("%u\n", stand[i].pontos);
+}
+
 char le_entrada() {
     char buff[3];
     scanf("%s", buff);
@@ -16,18 +31,18 @@ char le_entrada() {
         return buff[0];
 }
 
-void efetua_hit(jogadores *p_jogadores, char carta, jogadores *p_stand) {
-    /* Remove do comeco e insere no final para criar o ciclo: */
+void efetua_hit(jogadores *p_jogadores, char carta, jogador *stand) {
+    /* Remove do comeco e insere no final para criar o efeito de ciclo: */
     jogador aux = desenfileira(p_jogadores);
     adiciona_pontos(&aux, carta);
     if (acabou(aux))
-        insere(p_stand, aux);
+        stand[aux.pos] = aux; /* Coloca o jogador mantendo a ordem de saida */
     else
         enfileira(p_jogadores, aux);
 }
 
 /* Alem de criar a lista de jogadores, distribui as cartas iniciais. Aplica as regras de finalizacao: */
-jogadores inicia_jogadores(int n, baralho *p_baralho, jogadores *p_stand) {
+jogadores inicia_jogadores(int n, baralho *p_baralho, jogador *stand) {
     int i;
     jogadores ret = cria_jogadores();
 
@@ -36,7 +51,7 @@ jogadores inicia_jogadores(int n, baralho *p_baralho, jogadores *p_stand) {
         enfileira(&ret, cria_jogador(i));
 
     for (i = 0; i < 2 * n; i++) /* Distribuicao de cartas iniciais */
-        efetua_hit(&ret, desempilha(p_baralho), p_stand);
+        efetua_hit(&ret, desempilha(p_baralho), stand);
 
     return ret;
 }
@@ -52,30 +67,35 @@ baralho le_baralho(int m) {
 int main() {
     int m, n;
     char comando;
+    jogador *stand;
     baralho baralho;
-    jogadores jogadores, stand = cria_jogadores();
+    jogadores jogadores;
 
     scanf("%i %i", &m, &n);
     baralho = le_baralho(m);
-    jogadores = inicia_jogadores(n + 1, &baralho, &stand);
+    stand = safe_array_malloc(n + 1); /* Vetor onde fica os jogadores que acabaram */
+    jogadores = inicia_jogadores(n + 1, &baralho, stand);
 
     while ((comando = le_entrada()) != FIM) {
         if (comando == HIT)
-            efetua_hit(&jogadores, desempilha(&baralho), &stand);
-        else if (comando == STAND)
-            insere(&stand, desenfileira(&jogadores)); /* Coloca o jogador na posicao correta */
-        else /* Caso da trapaca */
+            efetua_hit(&jogadores, desempilha(&baralho), stand);
+        else if (comando == STAND) {
+            jogador aux = desenfileira(&jogadores);
+            stand[aux.pos] = aux;
+        } else /* Caso da trapaca */
             empilha(&baralho, comando);
     }
 
-    /* Repassa os jogadores restantes (caso houver) para os finalizados: */
-    while (jogadores.comeco != NULL)
-        insere(&stand, desenfileira(&jogadores));
+    /* Repassa os jogadores restantes (caso houver) para stand: */
+    while (!esta_vazia(jogadores)) {
+        jogador aux = desenfileira(&jogadores);
+        stand[aux.pos] = aux;
+    }
 
-    imprime_pontos(stand);
+    imprime_pontos(stand, n + 1);
 
-    /* Nao e necessario limpar a fila de jogadores, pois todos foram finalizados: */
-    limpa_baralho(baralho);
-    limpa_jogadores(stand);
+    /* Nao e necessario limpar a fila de jogadores, pois nesse ponto ela estara vazia: */
+    limpa_baralho(&baralho);
+    free(stand);
     return 0;
 }

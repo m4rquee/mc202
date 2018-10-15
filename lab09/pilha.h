@@ -19,6 +19,6 @@ void empilha(baralho *p_baralho, char carta);
 
 char desempilha(baralho *p_baralho);
 
-void limpa_baralho(baralho baralho);
+void limpa_baralho(baralho *p_baralho);
 
 #endif

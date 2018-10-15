@@ -15,14 +15,13 @@ typedef struct fila {
 
 jogadores cria_jogadores(); /* Cria uma fila vazia */
 
-void enfileira(jogadores *p_jogadores, jogador jogador); /* Adiciona um no ao final da fila */
+void enfileira(jogadores *p_jogadores, jogador jogador);
 
 jogador desenfileira(jogadores *p_jogadores);
 
-void insere(jogadores *p_jogadores, jogador jogador); /* Insere um jogador mantendo a ordem crescente */
+char esta_vazia(jogadores jogadores);
 
-void imprime_pontos(jogadores jogadores);
-
-void limpa_jogadores(jogadores jogadores);
+/* Essa funcao nunca foi usada, mas foi implementada pois uma fila completa deve possui-la */
+void limpa_jogadores(jogadores *p_jogadores);
 
 #endif
