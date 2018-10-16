@@ -16,6 +16,8 @@ void imprime(expressao raiz);
 
 expressao simplifica(expressao raiz);
 
+expressao le_expressao();
+
 char e_num(char dado[TAM_MAX]);
 
 #endif

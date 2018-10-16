@@ -1,4 +1,6 @@
-//
-// Created by lucas.silva on 16/10/18.
-//
+#include "arvore.h"
 
+int main() {
+    expressao aux = le_expressao();
+    return 0;
+}

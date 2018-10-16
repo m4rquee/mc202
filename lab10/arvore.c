@@ -64,6 +64,27 @@ expressao simplifica(expressao raiz) {
     return raiz;
 }
 
+expressao le_expressao() {
+    char buff[TAM_MAX];
+    expressao esq, dir;
+
+    scanf("%s", buff);
+    if (buff[0] == '(') {
+        esq = le_expressao();
+    } else {
+        return cria_arvore(buff, NULL, NULL);
+    }
+
+    scanf("%s", buff);
+    if (buff[0] == '(') {
+        dir = le_expressao();
+    } else {
+        return cria_arvore(buff, NULL, NULL);
+    }
+
+    return cria_arvore(buff, esq, dir);
+}
+
 char e_num(char dado[TAM_MAX]) {
     return ('0' <= dado[0] && dado[0] <= '9') || ('0' <= dado[1] && dado[1] <= '9');
 }
