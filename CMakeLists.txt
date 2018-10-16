@@ -39,3 +39,9 @@ add_executable(
         lab09/jogador.h lab09/jogador.c
         lab09/pilha.h lab09/pilha.c
 )
+
+include_directories(lab10)
+add_executable(
+        lab10 lab10/lab10.c
+        lab10/arvore.h lab10/arvore.c
+)
