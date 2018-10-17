@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include "arvore.h"
 
+#define eh_folha(exp) (!(exp)->esq && !(exp)->dir) /* Uma folha e uma varialvel ou um numero */
+
 No *cria_no(Dado dado, TipoDado tipo) {
     No *ret = malloc(sizeof(No));
     if (ret == NULL) {
@@ -18,10 +20,6 @@ expressao cria_expressao(Dado dado, TipoDado tipo, expressao esq, expressao dir)
     ret->esq = esq;
     ret->dir = dir;
     return ret;
-}
-
-char eh_folha(expressao exp) {
-    return !exp->esq && !exp->dir;
 }
 
 void imprime_como_exp_r(expressao exp) {
