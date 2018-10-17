@@ -20,46 +20,61 @@ expressao cria_expressao(Dado dado, TipoDado tipo, expressao esq, expressao dir)
     return ret;
 }
 
-void imprime_como_exp(expressao raiz) {
-    printf("( ");
-    if (raiz->esq)
-        imprime_como_exp(raiz->esq);
-
-    if (raiz->tipo == caractere)
-        printf("%c ", raiz->dado.operador_ou_variavel);
-    else if (raiz->tipo == inteiro)
-        printf("%d ", raiz->dado.numero);
-
-    if (raiz->dir)
-        imprime_como_exp(raiz->dir);
-    printf(") ");
+char eh_folha(expressao exp) {
+    return !exp->esq && !exp->dir;
 }
 
-expressao simplifica(expressao raiz) {
-    if (!raiz->esq && !raiz->dir)
-        return raiz;
+void imprime_como_exp_r(expressao exp) {
+    if (eh_folha(exp)) {
+        if (exp->tipo == inteiro)
+            printf("%i", exp->dado.numero);
+        else if (exp->tipo == caractere)
+            printf("%c", exp->dado.operador_ou_variavel);
+    } else {
+        printf("( ");
+        imprime_como_exp_r(exp->esq);
+        printf(" %c ", exp->dado.operador_ou_variavel);
+        imprime_como_exp_r(exp->dir);
+        printf(" )");
+    }
+}
 
-    if (raiz->esq->tipo == inteiro && raiz->dir->tipo == inteiro)
-        switch (raiz->dado.operador_ou_variavel) {
-            default:
-                raiz->tipo = inteiro;
-                raiz->esq = simplifica(raiz->esq);
-                raiz->dir = simplifica(raiz->dir);
+void imprime_como_exp(expressao exp) {
+    imprime_como_exp_r(exp);
+    printf(" \n");
+}
+
+expressao simplifica(expressao exp) {
+    if (eh_folha(exp)) /* Numero ou variavel */
+        return exp;
+
+    exp->esq = simplifica(exp->esq);
+    exp->dir = simplifica(exp->dir);
+
+    if (exp->esq->tipo == inteiro && exp->dir->tipo == inteiro) {
+        exp->tipo = inteiro;
+
+        switch (exp->dado.operador_ou_variavel) {
             case '+':
-                raiz->dado.numero = raiz->esq->dado.numero + raiz->dir->dado.numero;
+                exp->dado.numero = exp->esq->dado.numero + exp->dir->dado.numero;
                 break;
             case '-':
-                raiz->dado.numero = raiz->esq->dado.numero - raiz->dir->dado.numero;
+                exp->dado.numero = exp->esq->dado.numero - exp->dir->dado.numero;
                 break;
             case '*':
-                raiz->dado.numero = raiz->esq->dado.numero * raiz->dir->dado.numero;
+                exp->dado.numero = exp->esq->dado.numero * exp->dir->dado.numero;
                 break;
             case '/':
-                raiz->dado.numero = raiz->esq->dado.numero / raiz->dir->dado.numero;
+                exp->dado.numero = exp->esq->dado.numero / exp->dir->dado.numero;
                 break;
         }
 
-    return raiz;
+        free(exp->esq);
+        free(exp->dir);
+        exp->esq = exp->dir = NULL;
+    }
+
+    return exp;
 }
 
 char eh_num(const char dado[TAM_MAX]) {
@@ -89,4 +104,13 @@ expressao le_expressao() {
     }
 
     return ret;
+}
+
+void destroi_expressao(expressao exp) {
+    if (exp->esq)
+        destroi_expressao(exp->esq);
+    if (exp->dir)
+        destroi_expressao(exp->dir);
+
+    free(exp);
 }

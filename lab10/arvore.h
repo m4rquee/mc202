@@ -22,10 +22,12 @@ typedef No *expressao;
 
 expressao cria_expressao(Dado dado, TipoDado tipo, expressao esq, expressao dir);
 
-void imprime_como_exp(expressao raiz);
+void imprime_como_exp(expressao exp);
 
-expressao simplifica(expressao raiz);
+expressao simplifica(expressao exp);
 
 expressao le_expressao();
+
+void destroi_expressao(expressao exp);
 
 #endif

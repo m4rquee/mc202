@@ -1,8 +1,8 @@
 #include "arvore.h"
 
 int main() {
-    expressao aux = le_expressao();
-    aux = simplifica(aux);
-    imprime_como_exp(aux);
+    expressao exp = le_expressao();
+    imprime_como_exp(simplifica(exp));
+    destroi_expressao(exp);
     return 0;
 }
