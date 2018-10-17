@@ -27,7 +27,9 @@ void imprime_como_exp(expressao exp);
 
 expressao simplifica(expressao exp); /* Simplifica quando possivel */
 
-expressao le_expressao(); /* Essa funcao foi criada aqui para evitar o acesso direto das estruturas */
+Dado cria_numero(int numero);
+
+Dado cria_operador_ou_variavel(char operador_ou_variavel);
 
 void destroi_expressao(expressao exp);
 

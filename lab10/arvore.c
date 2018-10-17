@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "arvore.h"
 
-#define eh_folha(exp) (!(exp)->esq && !(exp)->dir) /* Uma folha e uma varialvel ou um numero */
+#define eh_folha(exp) (!(exp)->esq && !(exp)->dir) /* Uma folha pode ser uma varialvel ou um numero */
 
 No *cria_no(Dado dado, TipoDado tipo) {
     No *ret = malloc(sizeof(No));
@@ -23,36 +23,39 @@ expressao cria_expressao(Dado dado, TipoDado tipo, expressao esq, expressao dir)
 }
 
 void imprime_como_exp_r(expressao exp) {
+    /* Uma expressao e uma variavel/numero ou um operador com duas subexpressoes: */
     if (eh_folha(exp)) {
         if (exp->tipo == inteiro)
-            printf("%i", exp->dado.numero);
+            printf("%i ", exp->dado.numero);
         else if (exp->tipo == caractere)
-            printf("%c", exp->dado.operador_ou_variavel);
+            printf("%c ", exp->dado.operador_ou_variavel);
     } else {
         printf("( ");
         imprime_como_exp_r(exp->esq);
-        printf(" %c ", exp->dado.operador_ou_variavel);
+
+        printf("%c ", exp->dado.operador_ou_variavel);
+
         imprime_como_exp_r(exp->dir);
-        printf(" )");
+        printf(") ");
     }
 }
 
 void imprime_como_exp(expressao exp) {
     imprime_como_exp_r(exp);
-    printf(" \n");
+    printf("\n");
 }
 
 expressao simplifica(expressao exp) {
-    if (eh_folha(exp)) /* Numero ou variavel */
+    if (eh_folha(exp))
         return exp;
 
+    /* A partir daqui sabemos que o no e um operador: */
     exp->esq = simplifica(exp->esq);
     exp->dir = simplifica(exp->dir);
 
+    /* So e possivel simplificar caso os dois filhos sejam numeros: */
     if (exp->esq->tipo == inteiro && exp->dir->tipo == inteiro) {
-        exp->tipo = inteiro;
-
-        switch (exp->dado.operador_ou_variavel) {
+        switch (exp->dado.operador_ou_variavel) { /* Realiza a operacao e coloca no atual */
             case '+':
                 exp->dado.numero = exp->esq->dado.numero + exp->dir->dado.numero;
                 break;
@@ -65,8 +68,14 @@ expressao simplifica(expressao exp) {
             case '/':
                 exp->dado.numero = exp->esq->dado.numero / exp->dir->dado.numero;
                 break;
+            default:
+                printf("Operador nao suportado!");
+                exit(EXIT_FAILURE);
         }
 
+        exp->tipo = inteiro; /* O no atual deixa de ser um operador */
+
+        /* Os filhos nao seram mais usados: */
         free(exp->esq);
         free(exp->dir);
         exp->esq = exp->dir = NULL;
@@ -75,32 +84,15 @@ expressao simplifica(expressao exp) {
     return exp;
 }
 
-char eh_num(const char dado[TAM_MAX]) {
-    return ('0' <= dado[0] && dado[0] <= '9') || ('0' <= dado[1] && dado[1] <= '9');
+Dado cria_numero(int numero) {
+    Dado ret;
+    ret.numero = numero;
+    return ret;
 }
 
-expressao le_expressao() {
-    Dado aux;
-    char buff[TAM_MAX];
-    expressao esq, dir, ret;
-
-    scanf("%s", buff);
-    if (buff[0] == '(') {
-        esq = le_expressao();
-        scanf("%s", buff); /* Operador */
-        aux.operador_ou_variavel = buff[0];
-        dir = le_expressao();
-
-        ret = cria_expressao(aux, caractere, esq, dir);
-        scanf("%s", buff); /* Ignora o ')' */
-    } else if (eh_num(buff)) {
-        aux.numero = atoi(buff);
-        ret = cria_expressao(aux, inteiro, NULL, NULL);
-    } else { /* Variavel */
-        aux.operador_ou_variavel = buff[0];
-        ret = cria_expressao(aux, caractere, NULL, NULL);
-    }
-
+Dado cria_operador_ou_variavel(char operador_ou_variavel) {
+    Dado ret;
+    ret.operador_ou_variavel = operador_ou_variavel;
     return ret;
 }
 
