@@ -1,21 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
-#include <string.h>
 #include "arvore.h"
 
-expressao cria_no(char dado[TAM_MAX]) {
-    expressao ret = malloc(sizeof(No));
+No *cria_no(Dado dado, TipoDado tipo) {
+    No *ret = malloc(sizeof(No));
     if (ret == NULL) {
         printf("Erro ao alocar memoria");
         exit(EXIT_FAILURE);
     }
-    strcpy(ret->dado, dado);
+    ret->dado = dado;
+    ret->tipo = tipo;
     return ret;
 }
 
-expressao cria_arvore(char dado[TAM_MAX], expressao esq, expressao dir) {
-    expressao ret = cria_no(dado);
+expressao cria_expressao(Dado dado, TipoDado tipo, expressao esq, expressao dir) {
+    expressao ret = cria_no(dado, tipo);
     ret->esq = esq;
     ret->dir = dir;
     return ret;
@@ -26,65 +25,68 @@ void imprime_como_exp(expressao raiz) {
     if (raiz->esq)
         imprime_como_exp(raiz->esq);
 
-    printf("%s ", raiz->dado);
+    if (raiz->tipo == caractere)
+        printf("%c ", raiz->dado.operador_ou_variavel);
+    else if (raiz->tipo == inteiro)
+        printf("%d ", raiz->dado.numero);
 
-    if (raiz->esq)
-        imprime_como_exp(raiz->esq);
+    if (raiz->dir)
+        imprime_como_exp(raiz->dir);
     printf(") ");
 }
 
 expressao simplifica(expressao raiz) {
-    if (raiz->esq)
-        raiz->esq = simplifica(raiz->esq);
+    if (!raiz->esq && !raiz->dir)
+        return raiz;
 
-    if (raiz->dir)
-        raiz->dir = simplifica(raiz->dir);
-
-    if (e_num(raiz->esq->dado) && e_num(raiz->dir->dado)) { /* Tambem significa que o atual e um operador */
-        int result, esq = atoi(raiz->esq->dado), dir = atoi(raiz->dir->dado);
-
-        switch (raiz->dado[0]) {
+    if (raiz->esq->tipo == inteiro && raiz->dir->tipo == inteiro)
+        switch (raiz->dado.operador_ou_variavel) {
+            default:
+                raiz->tipo = inteiro;
+                raiz->esq = simplifica(raiz->esq);
+                raiz->dir = simplifica(raiz->dir);
             case '+':
-                result = esq + dir;
+                raiz->dado.numero = raiz->esq->dado.numero + raiz->dir->dado.numero;
                 break;
             case '-':
-                result = esq - dir;
+                raiz->dado.numero = raiz->esq->dado.numero - raiz->dir->dado.numero;
                 break;
             case '*':
-                result = esq * dir;
+                raiz->dado.numero = raiz->esq->dado.numero * raiz->dir->dado.numero;
                 break;
             case '/':
-                result = esq / dir;
+                raiz->dado.numero = raiz->esq->dado.numero / raiz->dir->dado.numero;
                 break;
         }
-
-        sprintf(raiz->dado, "%d", result);
-    }
 
     return raiz;
 }
 
+char eh_num(const char dado[TAM_MAX]) {
+    return ('0' <= dado[0] && dado[0] <= '9') || ('0' <= dado[1] && dado[1] <= '9');
+}
+
 expressao le_expressao() {
+    Dado aux;
     char buff[TAM_MAX];
-    expressao esq, dir;
+    expressao esq, dir, ret;
 
     scanf("%s", buff);
     if (buff[0] == '(') {
         esq = le_expressao();
-    } else {
-        return cria_arvore(buff, NULL, NULL);
-    }
-
-    scanf("%s", buff);
-    if (buff[0] == '(') {
+        scanf("%s", buff); /* Operador */
+        aux.operador_ou_variavel = buff[0];
         dir = le_expressao();
-    } else {
-        return cria_arvore(buff, NULL, NULL);
+
+        ret = cria_expressao(aux, caractere, esq, dir);
+        scanf("%s", buff); /* Ignora o ')' */
+    } else if (eh_num(buff)) {
+        aux.numero = atoi(buff);
+        ret = cria_expressao(aux, inteiro, NULL, NULL);
+    } else { /* Variavel */
+        aux.operador_ou_variavel = buff[0];
+        ret = cria_expressao(aux, caractere, NULL, NULL);
     }
 
-    return cria_arvore(buff, esq, dir);
-}
-
-char e_num(char dado[TAM_MAX]) {
-    return ('0' <= dado[0] && dado[0] <= '9') || ('0' <= dado[1] && dado[1] <= '9');
+    return ret;
 }
