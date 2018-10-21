@@ -10,14 +10,22 @@ typedef struct No_treap {
 
 typedef No_treap *p_no;
 
+/**A funcao de busca nao foi usada, pois e mais eficiente tentar remover do que checar se existe primeiro para depois
+ * decidir se remove ou se insere**/
+
 p_no cria_arvore();
 
-void insere(p_no *raiz, unsigned int chave);
+p_no insere(p_no raiz, unsigned int chave);
 
-char inclui(p_no raiz, unsigned int chave);
-
-char remove(p_no *raiz, unsigned int chave); /* Remove uma chave e no caso de nao existir retorna 0 */
+char remove_chave(p_no *raiz, unsigned int chave); /* Remove uma chave e no caso de nao existir retorna 0 */
 
 void destroi_arvore(p_no raiz);
+
+
+char checa_heap(p_no raiz);
+
+char checa_bst(p_no raiz, unsigned int min, unsigned int max);
+
+char checa_pais(p_no raiz);
 
 #endif
