@@ -48,25 +48,32 @@ p_no rotaciona_para_direita(p_no raiz) {
     return aux;
 }
 
-p_no insere(p_no raiz, unsigned int chave) {
-    if (raiz == NULL)
-        return cria_no(chave, rand() % 100);
+p_no corrige(p_no raiz) { /* Corrige a propriedade de Heap (caso estiver errada) */
+    if (raiz->esq != NULL && raiz->esq->prioridade > raiz->prioridade)
+        return rotaciona_para_direita(raiz);
 
-    if (chave < raiz->chave) {
-        raiz->esq = insere(raiz->esq, chave);
-        raiz->esq->pai = raiz;
-        if (raiz->esq->prioridade > raiz->prioridade)
-            raiz = rotaciona_para_direita(raiz);
-    } else {
-        raiz->dir = insere(raiz->dir, chave);
-        raiz->dir->pai = raiz;
-        if (raiz->dir->prioridade > raiz->prioridade)
-            raiz = rotaciona_para_esquerda(raiz);
-    }
+    if (raiz->dir != NULL && raiz->dir->prioridade > raiz->prioridade)
+        return rotaciona_para_esquerda(raiz);
 
     return raiz;
 }
 
+p_no insere(p_no raiz, unsigned int chave) {
+    if (raiz == NULL)
+        return cria_no(chave, rand() % 1000);
+
+    if (chave < raiz->chave) {
+        raiz->esq = insere(raiz->esq, chave);
+        raiz->esq->pai = raiz;
+    } else {
+        raiz->dir = insere(raiz->dir, chave);
+        raiz->dir->pai = raiz;
+    }
+
+    return corrige(raiz);
+}
+
+/* Se o no e uma folha, ele e removido senao ele e movido para "baixo" ate que se torne uma folha */
 char remove_chave(p_no *raiz, unsigned int chave) {
     if (*raiz == NULL) /* Nao achou a chave */
         return 0;
@@ -80,11 +87,7 @@ char remove_chave(p_no *raiz, unsigned int chave) {
 
         /* Como o gerador gera numeros maiores que 0, faz com que o no a ser removido tenha a menor prioridade: */
         (*raiz)->prioridade = -1;
-        // TODO
-        if ((*raiz)->esq != NULL)
-            *raiz = rotaciona_para_direita(*raiz);
-        else
-            *raiz = rotaciona_para_esquerda(*raiz);
+        *raiz = corrige(*raiz); /* "Desce" o no a ser removido */
     }
 
     if (chave < (*raiz)->chave)

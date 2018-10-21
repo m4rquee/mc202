@@ -22,10 +22,10 @@ char remove_chave(p_no *raiz, unsigned int chave); /* Remove uma chave e no caso
 void destroi_arvore(p_no raiz);
 
 
-char checa_heap(p_no raiz);
+// char checa_heap(p_no raiz);
 
-char checa_bst(p_no raiz, unsigned int min, unsigned int max);
+// char checa_bst(p_no raiz, unsigned int min, unsigned int max);
 
-char checa_pais(p_no raiz);
+// char checa_pais(p_no raiz);
 
 #endif
