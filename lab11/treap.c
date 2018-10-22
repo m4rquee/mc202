@@ -60,7 +60,7 @@ p_no corrige(p_no raiz) { /* Corrige a propriedade de Heap (caso estiver errada)
 
 p_no insere(p_no raiz, unsigned int chave) {
     if (raiz == NULL)
-        return cria_no(chave, rand() % 1000);
+        return cria_no(chave, rand());
 
     if (chave < raiz->chave) {
         raiz->esq = insere(raiz->esq, chave);
@@ -94,6 +94,19 @@ char remove_chave(p_no *raiz, unsigned int chave) {
         return remove_chave(&(*raiz)->esq, chave);
     else
         return remove_chave(&(*raiz)->dir, chave);
+}
+
+void imprime_decrescente_r(p_no raiz) {
+    if (raiz->dir != NULL)
+        imprime_decrescente_r(raiz->dir);
+    printf("%u ", raiz->chave);
+    if (raiz->esq != NULL)
+        imprime_decrescente_r(raiz->esq);
+}
+
+void imprime_decrescente(p_no raiz) {
+    imprime_decrescente_r(raiz);
+    printf("\n");
 }
 
 void destroi_arvore(p_no raiz) {

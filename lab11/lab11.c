@@ -4,16 +4,24 @@
 #include "treap.h"
 
 int main() {
-    unsigned int i;
-    p_no aux = cria_arvore();
+    unsigned int N, i, M, j, num;
+    p_no resultado = cria_arvore();
 
     srand((unsigned) time(NULL)); /* Coloca o horario atual como seed do gerador de numeros */
 
-    for (i = 0; i < 15; i++)
-        aux = insere(aux, i);
+    scanf("%u", &N);
+    for (i = 0; i < N; i++) {
+        scanf("%u", &M);
+        for (j = 0; j < M; j++) {
+            scanf("%u", &num);
+            /* Tenta remover, se nao der certo o elemento nao existe e pode ser inserido: */
+            if (!remove_chave(&resultado, num))
+                resultado = insere(resultado, num);
+        }
+    }
 
-    for (i = 2; i < 7; i++)
-        remove_chave(&aux, i);
+    imprime_decrescente(resultado);
 
+    destroi_arvore(resultado);
     return 0;
 }
