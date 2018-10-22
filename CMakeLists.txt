@@ -51,3 +51,9 @@ add_executable(
         lab11 lab11/lab11.c
         lab11/treap.h lab11/treap.c
 )
+
+include_directories(lab12)
+add_executable(
+        lab12 lab12/lab12.c
+        lab12/heap.h lab12/heap.c
+)
