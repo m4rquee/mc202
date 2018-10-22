@@ -5,14 +5,13 @@
 #define eh_folha(no) ((no)->esq == NULL && (no)->dir == NULL)
 
 p_no cria_no(unsigned int chave, int prioridade) {
-    p_no ret = malloc(sizeof(No_treap));
+    p_no ret = calloc(1, sizeof(No_treap));
     if (ret == NULL) {
         printf("Erro ao alocar memoria");
         exit(EXIT_FAILURE);
     }
     ret->chave = chave;
     ret->prioridade = prioridade;
-    ret->esq = ret->dir = NULL;
     return ret;
 }
 
@@ -49,11 +48,15 @@ p_no rotaciona_para_direita(p_no raiz) {
 }
 
 p_no corrige(p_no raiz) { /* Corrige a propriedade de Heap (caso estiver errada) */
-    if (raiz->esq != NULL && raiz->esq->prioridade > raiz->prioridade)
-        return rotaciona_para_direita(raiz);
+    int pr_esq = raiz->esq ? raiz->esq->prioridade : -1;
+    int pr_dir = raiz->dir ? raiz->dir->prioridade : -1;
 
-    if (raiz->dir != NULL && raiz->dir->prioridade > raiz->prioridade)
-        return rotaciona_para_esquerda(raiz);
+    if (pr_esq > raiz->prioridade || pr_dir > raiz->prioridade) { /* Propriedade esta errada */
+        if (pr_esq > pr_dir) /* O maior entre os filhos e jogado para cima */
+            return rotaciona_para_direita(raiz);
+        else
+            return rotaciona_para_esquerda(raiz);
+    }
 
     return raiz;
 }
@@ -64,7 +67,7 @@ p_no insere(p_no raiz, unsigned int chave) {
 
     if (chave < raiz->chave) {
         raiz->esq = insere(raiz->esq, chave);
-        raiz->esq->pai = raiz;
+        raiz->esq->pai = raiz; /* Caso o novo no seja filho do atual, a conexao e criada */
     } else {
         raiz->dir = insere(raiz->dir, chave);
         raiz->dir->pai = raiz;
@@ -73,7 +76,17 @@ p_no insere(p_no raiz, unsigned int chave) {
     return corrige(raiz);
 }
 
-/* Se o no e uma folha, ele e removido senao ele e movido para "baixo" ate que se torne uma folha */
+p_no busca(p_no raiz, unsigned int chave) {
+    if (raiz == NULL || raiz->chave == chave)
+        return raiz;
+
+    if (chave < raiz->chave)
+        return busca(raiz->esq, chave);
+    else
+        return busca(raiz->dir, chave);
+}
+
+/* Se o no e uma folha, ele e removido senao ele e movido para baixo ate que se torne uma folha */
 char remove_chave(p_no *raiz, unsigned int chave) {
     if (*raiz == NULL) /* Nao achou a chave */
         return 0;
@@ -87,9 +100,10 @@ char remove_chave(p_no *raiz, unsigned int chave) {
 
         /* Como o gerador gera numeros maiores que 0, faz com que o no a ser removido tenha a menor prioridade: */
         (*raiz)->prioridade = -1;
-        *raiz = corrige(*raiz); /* "Desce" o no a ser removido */
+        *raiz = corrige(*raiz); /* Desce o no a ser removido */
     }
 
+    /* Caso ainda nao achou ou o no a ser removido nao era folha: */
     if (chave < (*raiz)->chave)
         return remove_chave(&(*raiz)->esq, chave);
     else
