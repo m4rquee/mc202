@@ -7,19 +7,6 @@
 #define filho_dir(i) (2 * (i) + 2)
 #define pai(i) ((i - 1) / 2)
 
-char eh_maior(Tipo_Heap tipo, int a, int b) {
-    if (tipo == max)
-        return a > b;
-    else if (tipo == min)
-        return a < b;
-}
-
-void troca(p_caixa a, p_caixa b) {
-    Caixa aux = *a;
-    *a = *b;
-    *b = aux;
-}
-
 p_caixa cria_vetor(int n) {
     p_caixa ret = malloc(n * sizeof(Caixa));
     if (ret == NULL) {
@@ -29,7 +16,22 @@ p_caixa cria_vetor(int n) {
     return ret;
 }
 
-Caixa cria_caixa(char nome[TAM_NOME], int peso) {
+void troca(p_caixa a, p_caixa b) {
+    Caixa aux = *a;
+    *a = *b;
+    *b = aux;
+}
+
+char tem_prioridade(Tipo_Heap tipo, unsigned int a, unsigned int b) {
+    switch (tipo) {
+        case max:
+            return a > b;
+        case min:
+            return a < b;
+    }
+}
+
+Caixa cria_caixa(char nome[TAM_NOME], unsigned int peso) {
     Caixa ret;
     strcpy(ret.nome, nome);
     ret.peso = peso;
@@ -48,7 +50,7 @@ Heap cria_heap(Tipo_Heap tipo, int n_max) {
 void sobe(p_heap heap, int i) {
     p_caixa pai = &heap->vet[pai(i)], atual = &heap->vet[i];
     if (i > 0) {
-        if (eh_maior(heap->tipo, atual->peso, pai->peso)) {
+        if (tem_prioridade(heap->tipo, atual->peso, pai->peso)) {
             troca(pai, atual);
             sobe(heap, pai(i));
         }
@@ -65,14 +67,14 @@ Caixa olha_topo(p_heap heap) {
     return heap->vet[heap->n_atual];
 }
 
-void desce(p_heap heap, int i) {
-    int i_esq = filho_esq(i), i_dir = filho_dir(i);
-    int p_esq = i_esq < heap->n_atual ? heap->vet[i_esq].peso : -1;
-    int p_dir = i_dir < heap->n_atual ? heap->vet[i_dir].peso : -1;
-    int p_atual = heap->vet[i].peso;
+void desce(p_heap heap, unsigned int i) {
+    unsigned int i_esq = filho_esq(i), i_dir = filho_dir(i);
+    unsigned int p_esq = i_esq < heap->n_atual ? heap->vet[i_esq].peso : -1;
+    unsigned int p_dir = i_dir < heap->n_atual ? heap->vet[i_dir].peso : -1;
+    unsigned int p_atual = heap->vet[i].peso;
 
     if (i_esq < heap->n_atual) {
-        if (eh_maior(heap->tipo, i_esq, p_atual) || eh_maior(heap->tipo, i_dir, p_atual)) {
+        if (tem_prioridade(heap->tipo, i_esq, p_atual) || tem_prioridade(heap->tipo, i_dir, p_atual)) {
 
         }
     }

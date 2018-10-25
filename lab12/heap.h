@@ -9,7 +9,7 @@ typedef enum Tipo_Heap {
 
 typedef struct Caixa {
     char nome[TAM_NOME];
-    int peso;
+    unsigned int peso;
 } Caixa;
 
 typedef Caixa *p_caixa;
