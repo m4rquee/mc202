@@ -9,7 +9,7 @@ typedef enum Tipo_Heap {
 
 typedef struct Caixa {
     char nome[TAM_NOME];
-    unsigned int peso;
+    int peso;
 } Caixa;
 
 typedef Caixa *p_caixa;
@@ -22,10 +22,14 @@ typedef struct Heap {
 
 typedef Heap *p_heap;
 
-Caixa cria_caixa(char nome[TAM_NOME], unsigned int peso);
+Caixa cria_caixa(char nome[TAM_NOME], int peso);
 
 Heap cria_heap(Tipo_Heap tipo, int n_max);
 
 void insere(p_heap heap, Caixa caixa);
+
+Caixa olha_topo(p_heap heap);
+
+Caixa pega_topo(p_heap heap)
 
 #endif

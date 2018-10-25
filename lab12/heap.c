@@ -22,7 +22,7 @@ void troca(p_caixa a, p_caixa b) {
     *b = aux;
 }
 
-char tem_prioridade(Tipo_Heap tipo, unsigned int a, unsigned int b) {
+char tem_prioridade(Tipo_Heap tipo, int a, int b) {
     switch (tipo) {
         case max:
             return a > b;
@@ -31,7 +31,7 @@ char tem_prioridade(Tipo_Heap tipo, unsigned int a, unsigned int b) {
     }
 }
 
-Caixa cria_caixa(char nome[TAM_NOME], unsigned int peso) {
+Caixa cria_caixa(char nome[TAM_NOME], int peso) {
     Caixa ret;
     strcpy(ret.nome, nome);
     ret.peso = peso;
@@ -48,14 +48,12 @@ Heap cria_heap(Tipo_Heap tipo, int n_max) {
 }
 
 void sobe(p_heap heap, int i) {
-    p_caixa pai = &heap->vet[pai(i)], atual = &heap->vet[i];
-    if (i > 0) {
-        if (tem_prioridade(heap->tipo, atual->peso, pai->peso)) {
-            troca(pai, atual);
-            sobe(heap, pai(i));
-        }
+    Caixa caixa = heap->vet[i];
+    while (i > 0 && tem_prioridade(heap->tipo, caixa.peso, heap->vet[pai(i)].peso)) {
+        heap->vet[i] = heap->vet[pai(i)];
+        i = pai(i);
     }
-
+    heap->vet[i] = caixa;
 }
 
 void insere(p_heap heap, Caixa caixa) {
@@ -64,20 +62,15 @@ void insere(p_heap heap, Caixa caixa) {
 }
 
 Caixa olha_topo(p_heap heap) {
-    return heap->vet[heap->n_atual];
+    return heap->vet[heap->n_atual - 1];
 }
 
-void desce(p_heap heap, unsigned int i) {
-    unsigned int i_esq = filho_esq(i), i_dir = filho_dir(i);
-    unsigned int p_esq = i_esq < heap->n_atual ? heap->vet[i_esq].peso : -1;
-    unsigned int p_dir = i_dir < heap->n_atual ? heap->vet[i_dir].peso : -1;
-    unsigned int p_atual = heap->vet[i].peso;
-
-    if (i_esq < heap->n_atual) {
-        if (tem_prioridade(heap->tipo, i_esq, p_atual) || tem_prioridade(heap->tipo, i_dir, p_atual)) {
-
-        }
-    }
+void desce(p_heap heap, int i) {
+    Caixa caixa = heap->vet[i];
+    int p_esq, p_dir;
+    do {
+    } while (i < heap->n_atual - 1);
+    heap->vet[i] = caixa;
 }
 
 Caixa pega_topo(p_heap heap) {
