@@ -23,12 +23,10 @@ void troca(p_caixa a, p_caixa b) {
 }
 
 char tem_prioridade(Tipo_Heap tipo, Caixa a, Caixa b) {
-    switch (tipo) {
-        case max:
-            return a.peso > b.peso;
-        case min:
-            return a.peso < b.peso;
-    }
+    if (tipo == max)
+        return a.peso > b.peso;
+    else
+        return a.peso < b.peso;
 }
 
 Caixa cria_caixa(char nome[TAM_NOME], int peso) {
@@ -42,7 +40,6 @@ Heap cria_heap(Tipo_Heap tipo, int n_max) {
     Heap ret;
     ret.tipo = tipo;
     ret.n_atual = 0;
-    ret.n_max = n_max;
     ret.vet = cria_vetor(n_max);
     return ret;
 }
@@ -91,6 +88,10 @@ Caixa pega_topo(p_heap heap) {
     troca(&heap->vet[0], &heap->vet[--heap->n_atual]);
     desce(heap, 0);
     return ret;
+}
+
+int tamanho_atual(Heap heap) {
+    return heap.n_atual;
 }
 
 void destroi_heap(Heap heap) {
