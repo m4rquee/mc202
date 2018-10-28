@@ -32,8 +32,8 @@ int main() {
     Heap max_heap, min_heap;
 
     scanf("%d", &N);
-    max_heap = cria_heap(max, N / 2 + 1);
-    min_heap = cria_heap(min, N / 2);
+    max_heap = cria_heap(max, N / 2 + N % 2 + 1);
+    min_heap = cria_heap(min, N / 2 + N % 2);
 
     for (i = 0; i < N; i++) {
         scanf("%s %d", nome, &peso);
