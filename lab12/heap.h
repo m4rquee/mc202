@@ -26,10 +26,12 @@ Caixa cria_caixa(char nome[TAM_NOME], int peso);
 
 Heap cria_heap(Tipo_Heap tipo, int n_max);
 
-void insere(p_heap heap, Caixa caixa);
+void insere(p_heap p_heap, Caixa caixa);
 
 Caixa olha_topo(p_heap heap);
 
-Caixa pega_topo(p_heap heap)
+Caixa pega_topo(p_heap p_heap);
+
+void destroi_heap(Heap heap);
 
 #endif
