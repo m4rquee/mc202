@@ -8,9 +8,9 @@ int main() {
     aux = cria_heap(max, 5);
 
     for (i = 0; i < 5; i++) {
-        insere(&aux, cria_caixa("asd", rand() % 100));
-        printf("%i", olha_topo(&aux).peso);
-        printf("\n");
+        int n = rand() % 100;
+        insere(&aux, cria_caixa("asd", n));
+        printf("n = %d topo = %d\n", n, olha_topo(&aux).peso);
     }
 
     printf("\n");
