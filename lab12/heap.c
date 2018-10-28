@@ -25,11 +25,11 @@ void troca(p_caixa a, p_caixa b) {
 char tem_prioridade(Tipo_Heap tipo, Caixa a, Caixa b) {
     if (tipo == max)
         return a.peso > b.peso;
-    else
+    else /* tipo == min */
         return a.peso < b.peso;
 }
 
-Caixa cria_caixa(char nome[TAM_NOME], int peso) {
+Caixa cria_caixa(char nome[TAM_NOME], unsigned int peso) {
     Caixa ret;
     strcpy(ret.nome, nome);
     ret.peso = peso;
@@ -44,49 +44,54 @@ Heap cria_heap(Tipo_Heap tipo, int n_max) {
     return ret;
 }
 
-void sobe(p_heap heap, int i) {
-    Caixa caixa = heap->vet[i];
-    while (i > 0 && tem_prioridade(heap->tipo, caixa, heap->vet[pai(i)])) {
-        heap->vet[i] = heap->vet[pai(i)];
+void sobe(p_heap p_heap, int i) {
+    Caixa caixa = p_heap->vet[i];
+    /* Enquanto puder subir o pai atual e descido: */
+    while (i > 0 && tem_prioridade(p_heap->tipo, caixa, p_heap->vet[pai(i)])) {
+        p_heap->vet[i] = p_heap->vet[pai(i)]; /* Desce o pai */
         i = pai(i);
     }
-    heap->vet[i] = caixa;
+    p_heap->vet[i] = caixa; /* Nesse momento a posicao correta da caixa estara livre */
 }
 
-void insere(p_heap heap, Caixa caixa) {
-    heap->vet[heap->n_atual] = caixa;
-    sobe(heap, heap->n_atual++);
+void insere(p_heap p_heap, Caixa caixa) {
+    p_heap->vet[p_heap->n_atual] = caixa;
+    sobe(p_heap, p_heap->n_atual++);
 }
 
-Caixa olha_topo(p_heap heap) {
-    return heap->vet[0];
+Caixa olha_topo(Heap heap) {
+    return heap.vet[0];
 }
 
-void desce(p_heap heap, int i) {
+void desce(p_heap p_heap, int i) {
     int i_esq;
     char achou_possicao = 0;
-    Caixa aux = heap->vet[i];
+    Caixa aux = p_heap->vet[i];
 
-    while (!achou_possicao && (i_esq = filho_esq(i)) < heap->n_atual) {
-        int filho_prioritario = i_esq;
+    /* Enquanto puder descer o filho atual (de maior prioridade) e subido: */
+    while (!achou_possicao && (i_esq = filho_esq(i)) < p_heap->n_atual) {
+        int filho_prioritario = i_esq; /* Indice do filho de maior prioridade */
+
         int i_dir = filho_dir(i);
-        if (i_dir < heap->n_atual && tem_prioridade(heap->tipo, heap->vet[i_dir], heap->vet[i_esq]))
+        /* Checa se o filho da direita, se existir, tem mais prioridade que o da esquerda: */
+        if (i_dir < p_heap->n_atual && tem_prioridade(p_heap->tipo, p_heap->vet[i_dir], p_heap->vet[i_esq]))
             filho_prioritario = i_dir;
 
-        if (tem_prioridade(heap->tipo, heap->vet[filho_prioritario], aux)) {
-            heap->vet[i] = heap->vet[filho_prioritario];
+        /* Checa se o filho de maior prioridade deve ser subido (caso tenha mais prioridade que a caixa): */
+        if (tem_prioridade(p_heap->tipo, p_heap->vet[filho_prioritario], aux)) {
+            p_heap->vet[i] = p_heap->vet[filho_prioritario];
             i = filho_prioritario;
-        } else
+        } else /* Nesse ponto o indice correto da caixa foi encontrado */
             achou_possicao = 1;
     }
 
-    heap->vet[i] = aux;
+    p_heap->vet[i] = aux; /* Nesse momento a posicao correta da caixa estara livre */
 }
 
-Caixa pega_topo(p_heap heap) {
-    Caixa ret = heap->vet[0];
-    troca(&heap->vet[0], &heap->vet[--heap->n_atual]);
-    desce(heap, 0);
+Caixa pega_topo(p_heap p_heap) {
+    Caixa ret = p_heap->vet[0];
+    troca(&p_heap->vet[0], &p_heap->vet[--p_heap->n_atual]);
+    desce(p_heap, 0);
     return ret;
 }
 
