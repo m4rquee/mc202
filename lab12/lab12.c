@@ -39,9 +39,8 @@ int main() {
     Heap max_heap, min_heap;
 
     scanf("%d", &N);
-    /* O heap da esquerda (max_heap) e sempre maior ou igual ao da direita (min_heap), por isso deve ser maior.
-     * No caso de um numero impar de valores o tamaho deve ser o teto da divisao (N / 2 + N % 2): */
-    max_heap = cria_heap(max, N / 2 + N % 2 + 1);
+    /* O heap da esquerda (max_heap) e sempre maior ou igual ao da direita (min_heap), por isso +1: */
+    max_heap = cria_heap(max, N / 2 + 1);
     min_heap = cria_heap(min, N / 2 + N % 2);
 
     for (i = 0; i < N; i++) {
