@@ -2,7 +2,6 @@
 #define MC202_TREAP_H
 
 typedef struct No_treap {
-    struct No_treap *pai;
     unsigned int chave;
     int prioridade;
     struct No_treap *esq, *dir;
