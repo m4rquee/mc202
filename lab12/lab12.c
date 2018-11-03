@@ -39,7 +39,8 @@ int main() {
     Heap max_heap, min_heap;
 
     scanf("%d", &N);
-    /* O heap da esquerda (max_heap) e sempre maior ou igual ao da direita (min_heap), por isso +1: */
+    /* O heap da esquerda (max_heap) e sempre maior ou igual ao da direita (min_heap), por isso +1.
+     * So seram iguais no caso de N ser impar: */
     max_heap = cria_heap(max, N / 2 + 1);
     min_heap = cria_heap(min, N / 2 + N % 2);
 
