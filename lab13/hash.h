@@ -2,7 +2,7 @@
 #define MC202_HASH_H
 
 #define MAX 64
-#define TAM_NOME 19 /* Inicial mais sobrenome */
+#define TAM_NOME 17 /* Inicial mais sobrenome */
 
 typedef struct Autor {
     char nome[TAM_NOME];

@@ -42,7 +42,8 @@ void insere(Hash hash, char nome[TAM_NOME]) {
         if (!hash.vetor[cod].nome[0]) { /* Checa se a posicao e vazia */
             strcpy(hash.vetor[cod].nome, nome);
             return;
-        }
+        } else if (strcmp(nome, hash.vetor[cod].nome) == 0) /* Ja existe */
+            return;
 
         cod = (cod + pulo) % MAX; /* O vetor e "circular" */
     } while (ini != cod); /* A condicao evita loop */
