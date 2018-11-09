@@ -24,12 +24,6 @@ p_no rotaciona_para_esquerda(p_no raiz) {
     raiz->dir = aux->esq;
     aux->esq = raiz;
 
-    /* Corrige os pais: */
-    aux->pai = raiz->pai;
-    raiz->pai = aux;
-    if (raiz->dir != NULL)
-        raiz->dir->pai = raiz;
-
     return aux;
 }
 
@@ -37,12 +31,6 @@ p_no rotaciona_para_direita(p_no raiz) {
     p_no aux = raiz->esq;
     raiz->esq = aux->dir;
     aux->dir = raiz;
-
-    /* Corrige os pais: */
-    aux->pai = raiz->pai;
-    raiz->pai = aux;
-    if (raiz->esq != NULL)
-        raiz->esq->pai = raiz;
 
     return aux;
 }
@@ -65,13 +53,10 @@ p_no insere(p_no raiz, unsigned int chave) {
     if (raiz == NULL)
         return cria_no(chave, rand());
 
-    if (chave < raiz->chave) {
+    if (chave < raiz->chave)
         raiz->esq = insere(raiz->esq, chave);
-        raiz->esq->pai = raiz; /* Caso o novo no seja filho do atual, a conexao e criada */
-    } else {
+    else
         raiz->dir = insere(raiz->dir, chave);
-        raiz->dir->pai = raiz;
-    }
 
     return corrige(raiz);
 }
