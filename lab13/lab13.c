@@ -3,7 +3,16 @@
 #include "hash.h"
 
 void atualiza_todas_conexoes(Hash hash, char nome_autores[MAX][TAM_NOME], int n_autores) {
+    int i, pos;
+    unsigned long long conexoes = 0;
 
+    for (i = 0; i < n_autores; i++) {
+        pos = busca(hash, nome_autores[i]);
+        conexoes |= ((unsigned long long int) 1 << pos);
+    }
+
+    for (i = 0; i < n_autores; i++)
+        atualiza_conexoes(hash, nome_autores[i], conexoes);
 }
 
 int main() {
