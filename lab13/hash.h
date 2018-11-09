@@ -21,7 +21,7 @@ Hash criar_hash();
 
 void insere(Hash hash, char nome[TAM_NOME]);
 
-char contem(Hash hash, char nome[TAM_NOME], int *pos);
+int busca(Hash hash, char *nome);
 
 void atualiza_conexoes(Hash hash, char nome[TAM_NOME], unsigned long long novas_conexoes);
 

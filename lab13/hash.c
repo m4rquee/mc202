@@ -49,35 +49,32 @@ void insere(Hash hash, char nome[TAM_NOME]) {
     } while (ini != cod); /* A condicao evita loop */
 }
 
-char contem(Hash hash, char nome[TAM_NOME], int *pos) {
+int busca(Hash hash, char *nome) {
     int ini;
     int cod = ini = hash1(nome), pulo = hash2(nome);
-    *pos = -1; /* Indica que nao existe */
 
     do {
         if (!hash.vetor[cod].nome[0]) /* Checa se a posicao e vazia */
-            return 0;
-        else if (strcmp(nome, hash.vetor[cod].nome) == 0) { /* Achou o autor */
-            *pos = cod;
-            return 1;
-        }
+            return -1;
+        else if (strcmp(nome, hash.vetor[cod].nome) == 0) /* Achou o autor */
+            return cod;
 
         cod = (cod + pulo) % MAX; /* O vetor e "circular" */
     } while (ini != cod); /* A condicao evita loop */
 
-    return 0;
+    return -1;
 }
 
 void atualiza_conexoes(Hash hash, char nome[TAM_NOME], unsigned long long novas_conexoes) {
-    int pos;
-    if (contem(hash, nome, &pos))
+    int pos = busca(hash, nome);
+    if (pos != -1)
         hash.vetor[pos].conexoes |= novas_conexoes;
 }
 
 char possui_conexao(Hash hash, char nome[TAM_NOME], unsigned long long conexao) {
-    int pos;
+    int pos = busca(hash, nome);
     /* Como cada bit representa uma conexao, ao fazer o "ou bit a bit" o valor nao se altera caso a conexao exista: */
-    return contem(hash, nome, &pos) && (hash.vetor[pos].conexoes | conexao == hash.vetor[pos].conexoes);
+    return pos != -1 && (hash.vetor[pos].conexoes | conexao == hash.vetor[pos].conexoes);
 }
 
 void destroi_hash(Hash hash) {
