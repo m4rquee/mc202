@@ -35,30 +35,34 @@ Hash criar_hash() {
 }
 
 void insere(Hash hash, char nome[TAM_NOME]) {
-    int cod = hash1(nome), pulo = hash2(nome), i = 0;
+    int ini;
+    int cod = ini = hash1(nome), pulo = hash2(nome);
 
-    while (i++ != MAX) { /* A condicao evita loop */
-        if (!hash.vetor[cod].nome[0]) /* Checa se a posicao e vazia */
+    do {
+        if (!hash.vetor[cod].nome[0]) { /* Checa se a posicao e vazia */
             strcpy(hash.vetor[cod].nome, nome);
+            return;
+        }
 
         cod = (cod + pulo) % MAX; /* O vetor e "circular" */
-    }
+    } while (ini != cod); /* A condicao evita loop */
 }
 
 char contem(Hash hash, char nome[TAM_NOME], int *pos) {
-    int cod = hash1(nome), pulo = hash2(nome), i = 0;
+    int ini;
+    int cod = ini = hash1(nome), pulo = hash2(nome);
     *pos = -1; /* Indica que nao existe */
 
-    while (i++ != MAX) { /* A condicao evita loop */
+    do {
         if (!hash.vetor[cod].nome[0]) /* Checa se a posicao e vazia */
             return 0;
-        else if (strcmp(nome, hash.vetor[cod].nome)) { /* Achou o autor */
+        else if (strcmp(nome, hash.vetor[cod].nome) == 0) { /* Achou o autor */
             *pos = cod;
             return 1;
         }
 
         cod = (cod + pulo) % MAX; /* O vetor e "circular" */
-    }
+    } while (ini != cod); /* A condicao evita loop */
 
     return 0;
 }

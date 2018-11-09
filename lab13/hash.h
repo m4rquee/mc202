@@ -25,10 +25,10 @@ char contem(Hash hash, char nome[TAM_NOME], int *pos);
 
 void atualiza_conexoes(Hash hash, char nome[TAM_NOME], unsigned long long novas_conexoes);
 
-void atualiza_conexoes(Hash hash, char nome[TAM_NOME], unsigned long long novas_conexoes);
-
 char possui_conexao(Hash hash, char nome[TAM_NOME], unsigned long long conexao);
 
 void destroi_hash(Hash hash);
+
+/* A remocao nao e nescessaria */
 
 #endif
