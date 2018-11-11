@@ -3,10 +3,10 @@
 #include <memory.h>
 #include "hash.h"
 
-#define e_vazio(hash, pos) (!(hash).vetor[pos].uniao[0])
+#define e_vazio(hash, pos) (!(hash).vetor[pos][0])
 
-p_conexao cria_vetor(size_t n) {
-    p_conexao ret = calloc(n, sizeof(Conexao));
+Conexao *cria_vetor(size_t n) {
+    Conexao *ret = calloc(n, sizeof(Conexao));
     if (ret == NULL) {
         printf("Erro ao alocar memoria");
         exit(EXIT_FAILURE);
@@ -14,13 +14,14 @@ p_conexao cria_vetor(size_t n) {
     return ret;
 }
 
-void une_nomes(char dest[TAM_UNIAO], char a[TAM_NOME], char b[TAM_NOME]) {
-    if (strcmp(a, b) > 0) {
-        strcpy(dest, a);
-        strcat(dest, b);
+void une_nomes(char dest[TAM_UNIAO], char nome_a[TAM_NOME], char nome_b[TAM_NOME]) {
+    /* Garante que nao importara a ordem dos nomes na hora de fazer o hash: */
+    if (strcmp(nome_a, nome_b) > 0) {
+        strcpy(dest, nome_a);
+        strcat(dest, nome_b);
     } else {
-        strcpy(dest, b);
-        strcat(dest, a);
+        strcpy(dest, nome_b);
+        strcat(dest, nome_a);
     }
 }
 
@@ -37,7 +38,7 @@ int hash2(char str[TAM_NOME]) {
     int i, n = 0;
 
     /* Os for sao o inverso do hash1, para diminuir a chance de que os pulos sejam iguais para inicios iguais: */
-    for (i = strlen(str) - 1; i >= 0; i--)
+    for (i = (int) strlen(str) - 1; i >= 0; i--)
         n = (256 * n + str[i]) % MAX;
 
     return n | 1; /* Garante que sera impar, ou seja co-primo a MAX */
@@ -58,10 +59,10 @@ void insere(Hash hash, char nome_a[TAM_NOME], char nome_b[TAM_NOME]) {
     pulo = hash2(uniao);
 
     do {
-        if (e_vazio(hash, atual)) { /* Achou a possicao onde deve ser inserida */
-            strcpy(hash.vetor[atual].uniao, uniao);
+        if (e_vazio(hash, atual)) { /* Achou a possicao onde deve ser inserido */
+            strcpy(hash.vetor[atual], uniao);
             return;
-        } else if (strcmp(hash.vetor[atual].uniao, uniao) == 0) /* Ja existe */
+        } else if (strcmp(hash.vetor[atual], uniao) == 0) /* Ja existe */
             return;
 
         atual = (atual + pulo) % MAX; /* O vetor e "circular" */
@@ -79,7 +80,7 @@ char existe(Hash hash, char nome_a[TAM_NOME], char nome_b[TAM_NOME]) {
     do {
         if (e_vazio(hash, atual)) /* Se existisse o elemento deveria estar aqui */
             return 0;
-        else if (strcmp(hash.vetor[atual].uniao, uniao) == 0) /* Achou o autor */
+        else if (strcmp(hash.vetor[atual], uniao) == 0) /* Achou o autor */
             return 1;
 
         atual = (atual + pulo) % MAX; /* O vetor e "circular" */
