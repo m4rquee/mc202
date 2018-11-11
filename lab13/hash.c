@@ -3,10 +3,10 @@
 #include <memory.h>
 #include "hash.h"
 
-#define e_vazio(hash, pos) (!(hash).vetor[pos].nome[0])
+#define e_vazio(hash, pos) (!(hash).vetor[pos].uniao[0])
 
-p_autor cria_vetor(size_t n) {
-    p_autor ret = calloc(n, sizeof(Autor));
+p_conexao cria_vetor(size_t n) {
+    p_conexao ret = calloc(n, sizeof(Conexao));
     if (ret == NULL) {
         printf("Erro ao alocar memoria");
         exit(EXIT_FAILURE);
@@ -14,19 +14,31 @@ p_autor cria_vetor(size_t n) {
     return ret;
 }
 
-int hash1(char nome[TAM_NOME]) {
+void une_nomes(char dest[TAM_UNIAO], char a[TAM_NOME], char b[TAM_NOME]) {
+    if (strcmp(a, b) > 0) {
+        strcpy(dest, a);
+        strcat(dest, b);
+    } else {
+        strcpy(dest, b);
+        strcat(dest, a);
+    }
+}
+
+int hash1(char str[TAM_NOME]) {
     int i, n = 0;
-    for (i = 0; i < strlen(nome); i++)
-        n = (256 * n + nome[i]) % MAX;
+
+    for (i = 0; i < strlen(str); i++)
+        n = (256 * n + str[i]) % MAX;
 
     return n;
 }
 
-int hash2(char nome[TAM_NOME]) {
+int hash2(char str[TAM_NOME]) {
     int i, n = 0;
-    /* O for e inverso ao do hash1, para diminuir a chance de que os pulos sejam iguais para inicios iguais: */
-    for (i = strlen(nome) - 1; i >= 0; i--)
-        n = (256 * n + nome[i]) % MAX;
+
+    /* Os for sao o inverso do hash1, para diminuir a chance de que os pulos sejam iguais para inicios iguais: */
+    for (i = strlen(str) - 1; i >= 0; i--)
+        n = (256 * n + str[i]) % MAX;
 
     return n | 1; /* Garante que sera impar, ou seja co-primo a MAX */
 }
@@ -37,47 +49,43 @@ Hash criar_hash() {
     return ret;
 }
 
-void insere(Hash hash, char nome[TAM_NOME]) {
-    int atual, ini = hash1(nome), pulo = hash2(nome);
-    atual = ini;
+void insere(Hash hash, char nome_a[TAM_NOME], char nome_b[TAM_NOME]) {
+    int atual, ini, pulo;
+    char uniao[TAM_UNIAO];
+
+    une_nomes(uniao, nome_a, nome_b);
+    atual = ini = hash1(uniao);
+    pulo = hash2(uniao);
 
     do {
         if (e_vazio(hash, atual)) { /* Achou a possicao onde deve ser inserida */
-            strcpy(hash.vetor[atual].nome, nome);
+            strcpy(hash.vetor[atual].uniao, uniao);
             return;
-        } else if (strcmp(hash.vetor[atual].nome, nome) == 0) /* Ja existe */
+        } else if (strcmp(hash.vetor[atual].uniao, uniao) == 0) /* Ja existe */
             return;
 
         atual = (atual + pulo) % MAX; /* O vetor e "circular" */
     } while (ini != atual); /* A condicao evita loop */
 }
 
-int busca(Hash hash, char nome[TAM_NOME]) { /* Posicao do elemento no vetor, retorna -1 caso nao exista */
-    int atual, ini = hash1(nome), pulo = hash2(nome);
-    atual = ini;
+char existe(Hash hash, char nome_a[TAM_NOME], char nome_b[TAM_NOME]) {
+    int atual, ini, pulo;
+    char uniao[TAM_UNIAO];
+
+    une_nomes(uniao, nome_a, nome_b);
+    atual = ini = hash1(uniao);
+    pulo = hash2(uniao);
 
     do {
         if (e_vazio(hash, atual)) /* Se existisse o elemento deveria estar aqui */
-            return -1;
-        else if (strcmp(hash.vetor[atual].nome, nome) == 0) /* Achou o autor */
-            return atual;
+            return 0;
+        else if (strcmp(hash.vetor[atual].uniao, uniao) == 0) /* Achou o autor */
+            return 1;
 
         atual = (atual + pulo) % MAX; /* O vetor e "circular" */
     } while (ini != atual); /* A condicao evita loop */
 
-    return -1;
-}
-
-void atualiza_conexoes(Hash hash, char nome[TAM_NOME], int64_t novas_conexoes) {
-    int pos = busca(hash, nome);
-    if (pos != -1)
-        hash.vetor[pos].conexoes |= novas_conexoes;
-}
-
-char possui_conexao(Hash hash, char nome[TAM_NOME], int64_t conexao) {
-    int pos = busca(hash, nome);
-    /* Como cada bit representa uma conexao, ao fazer o "ou bit a bit" o valor nao se altera caso a conexao exista: */
-    return pos != -1 && (hash.vetor[pos].conexoes | conexao) == hash.vetor[pos].conexoes;
+    return 0;
 }
 
 void destroi_hash(Hash hash) {
