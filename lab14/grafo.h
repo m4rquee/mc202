@@ -9,19 +9,25 @@ typedef struct No_Lista {
 typedef No_Lista *p_no;
 
 typedef struct No_Grafo {
-    char idade;
+    int idade;
     p_no conexoes;
-    unsigned int filtro;
 } No_Grafo;
 
 typedef struct Grafo {
+    int n_nos;
     No_Grafo *nos;
 } Grafo;
 
-void cria_grafo(int n_nos);
+Grafo cria_grafo(int n_nos);
 
-void insere_conexao(int indice_no, int indice_conexao);
+void insere_no(Grafo grafo, int indice_no, int idade);
 
-char existe_conexao(int indice_no, int indice_conexao);
+void cria_conexao(Grafo grafo, int u, int v); /* Insere ordenado (facilita a interseccao) */
+
+int *entediados(Grafo grafo);
+
+void destroi_grafo(Grafo grafo);
+
+/* A remocao nao e nescessaria */
 
 #endif
