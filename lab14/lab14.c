@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "grafo.h"
 
 Grafo inicializa_grafo(int n, int m) {
@@ -31,6 +32,7 @@ int main() {
         if (resultado[i])
             printf("%d\n", i);
 
+    free(resultado);
     destroi_grafo(grafo);
     return 0;
 }
