@@ -11,16 +11,6 @@ void *safe_calloc(size_t nmemb, size_t size) {
     return ret;
 }
 
-p_no cria_no(int indice) {
-    p_no ret = malloc(sizeof(No_Lista));
-    if (ret == NULL) {
-        printf("Erro ao alocar memoria");
-        exit(EXIT_FAILURE);
-    }
-    ret->indice = indice;
-    return ret;
-}
-
 Grafo cria_grafo(int n_nos) {
     Grafo ret;
     ret.n_nos = n_nos;
@@ -28,12 +18,13 @@ Grafo cria_grafo(int n_nos) {
     return ret;
 }
 
-void insere_no(Grafo grafo, int indice_no, int idade) {
+void insere_no(Grafo grafo, int indice_no, char idade) { /* Inserir significa colocar a idade na possicao correta */
     grafo.nos[indice_no].idade = idade;
 }
 
-p_no insere_lista(p_no raiz, int x) {
-    p_no novo = cria_no(x);
+p_no insere_lista(p_no raiz, int indice) {
+    p_no novo = safe_calloc(1, sizeof(No_Lista));
+    novo->indice = indice;
     novo->prox = raiz;
     return novo;
 }
@@ -43,41 +34,47 @@ void cria_conexao(Grafo grafo, int u, int v) {
     grafo.nos[v].conexoes = insere_lista(grafo.nos[v].conexoes, u);
 }
 
-void interseccao(int *resultado, p_no a, p_no b) {
+/* Dado os indices de um triangulo checa se e um grupo entediado: */
+char estam_entediados(Grafo grafo, int i_a, int i_b, int i_c) {
+    char a = grafo.nos[i_a].idade, b = grafo.nos[i_b].idade, c = grafo.nos[i_c].idade;
+    int soma = a + b + c;
+    return soma > 6 * a || soma > 6 * b || soma > 6 * c; /* Equivalente a checar se media > 2Xi */
+}
+
+/* Coloca no resultado se cada no do grafo esta na intersecsao (2) ou esta em apenas um (1): */
+void interseccao(char *resultado, p_no lista_a, p_no lista_b) {
     p_no i;
-    for (i = a; i != NULL; i = i->prox)
+    for (i = lista_a; i != NULL; i = i->prox)
         resultado[i->indice] += 1;
 
-    for (i = b; i != NULL; i = i->prox)
+    for (i = lista_b; i != NULL; i = i->prox)
         resultado[i->indice] += 1;
 }
 
-char estam_entediados(int a, int b, int c) {
-    double media = ((double) a + b + c) / 3;
-    return media > 2 * a || media > 2 * b || media > 2 * c;
-}
-
-int *entediados(Grafo grafo) {
+char *entediados(Grafo grafo) {
+    int i, j;
     p_no conexao;
-    int i, j, *entediados, *parcial;
-    entediados = safe_calloc(grafo.n_nos, sizeof(int));
-    parcial = safe_calloc(grafo.n_nos, sizeof(int));
+    char *ret = safe_calloc(grafo.n_nos, sizeof(char)), *aux = safe_calloc(grafo.n_nos, sizeof(char));
 
+    /* Para cada conexao de cada no: */
     for (i = 0; i < grafo.n_nos; i++)
         for (conexao = grafo.nos[i].conexoes; conexao != NULL; conexao = conexao->prox)
-            if (conexao->indice > i) {
-                interseccao(parcial, grafo.nos[i].conexoes, grafo.nos[conexao->indice].conexoes);
+            if (conexao->indice > i) { /* Evita checar cada grupo (triangulo) mais de uma vez */
+                /* Como os dois nos estam ligados, basta que um terceiro no esteja na interseccao
+                 * das duas listas adjacencia para que os tres formem um triangulo: */
+                interseccao(aux, grafo.nos[i].conexoes, grafo.nos[conexao->indice].conexoes);
 
+                /* Percorre todos os triangulos formados pelos no i e a conexao atual: */
                 for (j = 0; j < grafo.n_nos; j++) {
-                    if (parcial[j] == 2 &&
-                        estam_entediados(grafo.nos[i].idade, grafo.nos[conexao->indice].idade, grafo.nos[j].idade))
-                        entediados[i] = entediados[conexao->indice] = entediados[j] = 1;
-                    parcial[j] = 0;
+                    /* Adiciona os nos do triangulo caso este seja um grupo entediado: */
+                    if (aux[j] == 2 && estam_entediados(grafo, i, conexao->indice, j))
+                        ret[i] = ret[conexao->indice] = ret[j] = 1;
+                    aux[j] = 0; /* Zera o auxiliar para a proxima iteracao */
                 }
             }
 
-    free(parcial);
-    return entediados;
+    free(aux);
+    return ret;
 }
 
 void destroi_lista(p_no lista) {

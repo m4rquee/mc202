@@ -9,7 +9,7 @@ typedef struct No_Lista {
 typedef No_Lista *p_no;
 
 typedef struct No_Grafo {
-    int idade;
+    char idade;
     p_no conexoes;
 } No_Grafo;
 
@@ -20,11 +20,11 @@ typedef struct Grafo {
 
 Grafo cria_grafo(int n_nos);
 
-void insere_no(Grafo grafo, int indice_no, int idade);
+void insere_no(Grafo grafo, int indice_no, char idade);
 
-void cria_conexao(Grafo grafo, int u, int v); /* Insere ordenado (facilita a interseccao) */
+void cria_conexao(Grafo grafo, int u, int v);
 
-int *entediados(Grafo grafo);
+char *entediados(Grafo grafo); /* Retorna uma lista que indica se cada no esta em grupo entediado (1), ou nao (0) */
 
 void destroi_grafo(Grafo grafo);
 
