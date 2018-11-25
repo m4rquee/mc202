@@ -18,7 +18,7 @@ Grafo cria_grafo(int n_nos) {
     return ret;
 }
 
-void insere_no(Grafo grafo, int indice_no, char idade) { /* Inserir significa colocar a idade na possicao correta */
+void insere_no(Grafo grafo, int indice_no, char idade) { /* Inserir na pratica e colocar a idade na possicao correta */
     grafo.nos[indice_no].idade = idade;
 }
 
@@ -41,7 +41,7 @@ char estam_entediados(Grafo grafo, int i_a, int i_b, int i_c) {
     return soma > 6 * a || soma > 6 * b || soma > 6 * c; /* Equivalente a checar se media > 2Xi */
 }
 
-/* Coloca no resultado se cada no do grafo esta na intersecsao (2) ou esta em apenas um (1): */
+/* Coloca no resultado se cada no do grafo esta na intersecsao (2), ou esta em apenas uma das listas (1): */
 void interseccao(char *resultado, p_no lista_a, p_no lista_b) {
     p_no i;
     for (i = lista_a; i != NULL; i = i->prox)
@@ -60,8 +60,8 @@ char *entediados(Grafo grafo) {
     for (i = 0; i < grafo.n_nos; i++)
         for (conexao = grafo.nos[i].conexoes; conexao != NULL; conexao = conexao->prox)
             if (conexao->indice > i) { /* Evita checar cada grupo (triangulo) mais de uma vez */
-                /* Como os dois nos estam ligados, basta que um terceiro no esteja na interseccao
-                 * das duas listas adjacencia para que os tres formem um triangulo: */
+                /* Como os dois nos atuais (i e conexao->indice) estam ligados, basta que um terceiro no
+                 * esteja na interseccao das duas listas de adjacencia para que os tres formem um triangulo: */
                 interseccao(aux, grafo.nos[i].conexoes, grafo.nos[conexao->indice].conexoes);
 
                 /* Percorre todos os triangulos formados pelos no i e a conexao atual: */
@@ -69,7 +69,7 @@ char *entediados(Grafo grafo) {
                     /* Adiciona os nos do triangulo caso este seja um grupo entediado: */
                     if (aux[j] == 2 && estam_entediados(grafo, i, conexao->indice, j))
                         ret[i] = ret[conexao->indice] = ret[j] = 1;
-                    aux[j] = 0; /* Zera o auxiliar para a proxima iteracao */
+                    aux[j] = 0; /* Zera o auxiliar para a proxima conexao */
                 }
             }
 
