@@ -69,3 +69,9 @@ add_executable(
         lab14 lab14/lab14.c
         lab14/grafo.h lab14/grafo.c
 )
+
+include_directories(lab15)
+add_executable(
+        lab15 lab15/lab15.c
+        lab15/grafo.h lab15/grafo.c
+)
