@@ -14,7 +14,7 @@ void *safe_calloc(size_t nmemb, size_t size) {
 Grafo cria_grafo(int n_nos) {
     Grafo ret;
     ret.n_nos = n_nos;
-    ret.nos = safe_calloc(n_nos, sizeof(No_Grafo));
+    ret.adjacencias = safe_calloc(n_nos, sizeof(p_no));
     return ret;
 }
 
@@ -26,8 +26,8 @@ p_no insere_lista(p_no raiz, int indice) {
 }
 
 void cria_conexao(Grafo grafo, int u, int v) {
-    grafo.nos[u].conexoes = insere_lista(grafo.nos[u].conexoes, v);
-    grafo.nos[v].conexoes = insere_lista(grafo.nos[v].conexoes, u);
+    grafo.adjacencias[u] = insere_lista(grafo.adjacencias[u], v);
+    grafo.adjacencias[v] = insere_lista(grafo.adjacencias[v], u);
 }
 
 void destroi_lista(p_no lista) {
@@ -40,6 +40,6 @@ void destroi_lista(p_no lista) {
 void destroi_grafo(Grafo grafo) {
     int i;
     for (i = 0; i < grafo.n_nos; i++)
-        destroi_lista(grafo.nos[i].conexoes);
-    free(grafo.nos);
+        destroi_lista(grafo.adjacencias[i]);
+    free(grafo.adjacencias);
 }
