@@ -1,12 +1,12 @@
 #ifndef MC202_GRAFO_H
 #define MC202_GRAFO_H
 
-typedef struct No_Lista {
+typedef struct No {
     int indice;
-    struct No_Lista *prox;
-} No_Lista;
+    struct No *prox;
+} No;
 
-typedef No_Lista *p_no;
+typedef No *p_no;
 
 typedef struct Grafo {
     int n_nos;
@@ -16,6 +16,8 @@ typedef struct Grafo {
 Grafo cria_grafo(int n_nos);
 
 void cria_conexao(Grafo grafo, int u, int v);
+
+void busca_em_largura(Grafo grafo, int pos);
 
 void destroi_grafo(Grafo grafo);
 

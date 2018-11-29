@@ -2,6 +2,11 @@
 #include <stdlib.h>
 #include "grafo.h"
 
+typedef struct fila {
+    No *comeco;
+    No *fim;
+} jogadores;
+
 void *safe_calloc(size_t nmemb, size_t size) {
     void *ret = calloc(nmemb, size);
     if (ret == NULL) {
@@ -19,7 +24,7 @@ Grafo cria_grafo(int n_nos) {
 }
 
 p_no insere_lista(p_no raiz, int indice) {
-    p_no novo = safe_calloc(1, sizeof(No_Lista));
+    p_no novo = safe_calloc(1, sizeof(No));
     novo->indice = indice;
     novo->prox = raiz;
     return novo;
@@ -28,6 +33,11 @@ p_no insere_lista(p_no raiz, int indice) {
 void cria_conexao(Grafo grafo, int u, int v) {
     grafo.adjacencias[u] = insere_lista(grafo.adjacencias[u], v);
     grafo.adjacencias[v] = insere_lista(grafo.adjacencias[v], u);
+}
+
+void busca_em_largura(Grafo grafo, int pos) {
+    char *visitados = safe_calloc(grafo.n_nos, sizeof(char));
+
 }
 
 void destroi_lista(p_no lista) {
