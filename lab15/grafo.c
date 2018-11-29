@@ -20,6 +20,12 @@ typedef struct Fila {
 
 typedef Fila *p_fila;
 
+Fila cria_fila() {
+    Fila ret;
+    ret.comeco = ret.fim = NULL;
+    return ret;
+}
+
 void enfileira(p_fila fila, int indice) {
     p_no p_novo = safe_calloc(1, sizeof(No));
     if (fila->comeco == NULL) /* Lista vazia */
@@ -47,7 +53,7 @@ int desenfileira(p_fila fila) {
 Grafo cria_grafo(int n_nos) {
     Grafo ret;
     ret.n_nos = n_nos;
-    ret.adjacencias = safe_calloc(n_nos, sizeof(p_no));
+    ret.nos = safe_calloc(n_nos, sizeof(No_Grafo));
     return ret;
 }
 
@@ -59,13 +65,19 @@ p_no insere_lista(p_no raiz, int indice) {
 }
 
 void cria_conexao(Grafo grafo, int u, int v) {
-    grafo.adjacencias[u] = insere_lista(grafo.adjacencias[u], v);
-    grafo.adjacencias[v] = insere_lista(grafo.adjacencias[v], u);
+    grafo.nos[u].conexoes = insere_lista(grafo.nos[u].conexoes, v);
+    grafo.nos[v].conexoes = insere_lista(grafo.nos[v].conexoes, u);
 }
 
 void busca_em_largura(Grafo grafo, int pos) {
+    int w, v;
     char *visitados = safe_calloc(grafo.n_nos, sizeof(char));
+    char *distancias = safe_calloc(grafo.n_nos, sizeof(char));
+    Fila aux = cria_fila();
+    enfileira(&aux, pos);
 
+    free(visitados);
+    free(distancias);
 }
 
 void destroi_lista(p_no lista) {
@@ -78,6 +90,6 @@ void destroi_lista(p_no lista) {
 void destroi_grafo(Grafo grafo) {
     int i;
     for (i = 0; i < grafo.n_nos; i++)
-        destroi_lista(grafo.adjacencias[i]);
-    free(grafo.adjacencias);
+        destroi_lista(grafo.nos[i].conexoes);
+    free(grafo.nos);
 }

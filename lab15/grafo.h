@@ -8,9 +8,14 @@ typedef struct No {
 
 typedef No *p_no;
 
+typedef struct No_Grafo {
+    int n_grupos; /* Numero de grupos em que esse no se encontra */
+    p_no conexoes;
+} No_Grafo;
+
 typedef struct Grafo {
     int n_nos;
-    p_no *adjacencias;
+    No_Grafo *nos;
 } Grafo;
 
 Grafo cria_grafo(int n_nos);
