@@ -2,11 +2,6 @@
 #include <stdlib.h>
 #include "grafo.h"
 
-typedef struct fila {
-    No *comeco;
-    No *fim;
-} jogadores;
-
 void *safe_calloc(size_t nmemb, size_t size) {
     void *ret = calloc(nmemb, size);
     if (ret == NULL) {
@@ -15,6 +10,39 @@ void *safe_calloc(size_t nmemb, size_t size) {
     }
     return ret;
 }
+
+/* Fila -------------------------------------------------------------------------: */
+
+typedef struct Fila {
+    No *comeco;
+    No *fim;
+} Fila;
+
+typedef Fila *p_fila;
+
+void enfileira(p_fila fila, int indice) {
+    p_no p_novo = safe_calloc(1, sizeof(No));
+    if (fila->comeco == NULL) /* Lista vazia */
+        fila->comeco = p_novo;
+    else
+        fila->fim->prox = p_novo;
+
+    fila->fim = p_novo;
+}
+
+int desenfileira(p_fila fila) {
+    p_no primeiro = fila->comeco;
+    int ret = primeiro->indice;
+    fila->comeco = fila->comeco->prox;
+
+    if (fila->comeco == NULL) /* Ao remover o ultimo no */
+        fila->fim = NULL;
+
+    free(primeiro);
+    return ret;
+}
+
+/* Grafo ------------------------------------------------------------------------: */
 
 Grafo cria_grafo(int n_nos) {
     Grafo ret;
