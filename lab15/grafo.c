@@ -28,6 +28,7 @@ Fila cria_fila() {
 
 void enfileira(p_fila fila, int indice) {
     p_no p_novo = safe_calloc(1, sizeof(No));
+    p_novo->indice = indice;
     if (fila->comeco == NULL) /* Lista vazia */
         fila->comeco = p_novo;
     else
@@ -46,6 +47,10 @@ int desenfileira(p_fila fila) {
 
     free(primeiro);
     return ret;
+}
+
+char esta_vazia(Fila fila) {
+    return fila.comeco == NULL;
 }
 
 /* Grafo ------------------------------------------------------------------------: */
@@ -69,15 +74,38 @@ void cria_conexao(Grafo grafo, int u, int v) {
     grafo.nos[v].conexoes = insere_lista(grafo.nos[v].conexoes, u);
 }
 
-void busca_em_largura(Grafo grafo, int pos) {
-    int w, v;
+void adiciona_grupo(Grafo grafo, int pos) {
+    grafo.nos[pos].n_grupos++;
+}
+
+void busca_em_largura(Grafo grafo, int *distancias, int pos) {
+    int v;
+    p_no adj;
+    Fila fila;
     char *visitados = safe_calloc(grafo.n_nos, sizeof(char));
-    char *distancias = safe_calloc(grafo.n_nos, sizeof(char));
-    Fila aux = cria_fila();
-    enfileira(&aux, pos);
+
+    for (v = 0; v < grafo.n_nos; v++)
+        distancias[v] = -1;
+
+    fila = cria_fila();
+    enfileira(&fila, pos);
+
+    visitados[pos] = 1;
+    distancias[pos] = 0;
+    while (!esta_vazia(fila)) {
+        v = desenfileira(&fila);
+        for (adj = grafo.nos[v].conexoes; adj != NULL; adj = adj->prox) {
+            if (!visitados[adj->indice]) {
+                visitados[adj->indice] = 1;
+                distancias[adj->indice] = distancias[v] + 1;
+
+                if (grafo.nos[adj->indice].n_grupos > 1)
+                    enfileira(&fila, adj->indice);
+            }
+        }
+    }
 
     free(visitados);
-    free(distancias);
 }
 
 void destroi_lista(p_no lista) {

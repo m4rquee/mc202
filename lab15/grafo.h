@@ -22,7 +22,9 @@ Grafo cria_grafo(int n_nos);
 
 void cria_conexao(Grafo grafo, int u, int v);
 
-void busca_em_largura(Grafo grafo, int pos);
+void adiciona_grupo(Grafo grafo, int pos);
+
+void busca_em_largura(Grafo grafo, int *distancias, int pos);
 
 void destroi_grafo(Grafo grafo);
 
