@@ -80,27 +80,29 @@ void adiciona_grupo(Grafo grafo, int pos) {
 
 void busca_em_largura(Grafo grafo, int *distancias, int pos) {
     int v;
-    p_no adj;
     Fila fila;
+    p_no conexao;
     char *visitados = safe_calloc(grafo.n_nos, sizeof(char));
 
-    for (v = 0; v < grafo.n_nos; v++)
+    for (v = 0; v < grafo.n_nos; v++) /* No inicio e considerado que nao existe caminho entre os nos */
         distancias[v] = -1;
 
     fila = cria_fila();
     enfileira(&fila, pos);
 
     visitados[pos] = 1;
-    distancias[pos] = 0;
+    distancias[pos] = 0; /* A distancia de um no a ele mesmo e zero */
     while (!esta_vazia(fila)) {
         v = desenfileira(&fila);
-        for (adj = grafo.nos[v].conexoes; adj != NULL; adj = adj->prox) {
-            if (!visitados[adj->indice]) {
-                visitados[adj->indice] = 1;
-                distancias[adj->indice] = distancias[v] + 1;
+        for (conexao = grafo.nos[v].conexoes; conexao != NULL; conexao = conexao->prox) {
+            if (!visitados[conexao->indice]) {
+                visitados[conexao->indice] = 1;
+                /* Como fizemos o melhor caminho ate v, a distancia do atual ao inicial e a distancia ate v mais um: */
+                distancias[conexao->indice] = distancias[v] + 1;
 
-                if (grafo.nos[adj->indice].n_grupos > 1)
-                    enfileira(&fila, adj->indice);
+                /* So precisamos enfileirar um no se este cria uma "ponte" entre grupos: */
+                if (grafo.nos[conexao->indice].n_grupos > 1)
+                    enfileira(&fila, conexao->indice);
             }
         }
     }

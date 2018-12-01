@@ -14,10 +14,10 @@ int *safe_array_malloc(int n) {
 }
 
 void imprime_resultado(int *distancias, int n) {
-    int max = 0, i;
+    int i, max = 0;
     for (i = 0; i < n; i++) {
         max = MAX(max, distancias[i]);
-        if (distancias[i] == -1)
+        if (distancias[i] == -1) /* Nao existe caminho que ligue os nos */
             printf("%d ", i);
     }
 
@@ -30,12 +30,13 @@ void le_grupo(Grafo grafo) {
     scanf("%d", &tam);
     pessoas = safe_array_malloc(tam);
 
-    for (i = 0; i < tam; i++) {
+    for (i = 0; i < tam; i++) { /* Le todas as pessoas */
         scanf("%d", &aux);
         pessoas[i] = aux;
         adiciona_grupo(grafo, aux);
     }
 
+    /* Adiciona uma conexao entre todas as pessoas do grupo: */
     for (i = 0; i < tam - 1; i++)
         for (j = i + 1; j < tam; j++)
             cria_conexao(grafo, pessoas[i], pessoas[j]);
@@ -43,6 +44,9 @@ void le_grupo(Grafo grafo) {
     free(pessoas);
 }
 
+/* Vale notar que nas entradas existem pares de nos em mais de um grupo, isso criara mais de uma conexao entre os nos.
+* So que tratar isso necessitaria de uma busca na lista de adjacencias. Visto que essa propriedade nao influencia em
+* nada, e que os grafos das entradas sao esparsos foi optado por ignorar esse fato. */
 int main() {
     int n, k, i;
     Grafo grafo;
@@ -55,7 +59,7 @@ int main() {
     for (i = 0; i < k; i++)
         le_grupo(grafo);
 
-    for (i = 0; i < n; i++) {
+    for (i = 0; i < n; i++) { /* Para cada no realiza a busca */
         busca_em_largura(grafo, distancias, i);
         imprime_resultado(distancias, n);
     }
